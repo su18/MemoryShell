@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
+
+    <servlet>
+        <servlet-name>IndexServlet</servlet-name>
+        <servlet-class>org.su18.memshell.test.resin.IndexServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>AddResinServlet</servlet-name>
+        <servlet-class>org.su18.memshell.test.resin.AddResinServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>AddResinFilter</servlet-name>
+        <servlet-class>org.su18.memshell.test.resin.AddResinFilter</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>IndexServlet</servlet-name>
+        <url-pattern>/index</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AddResinServlet</servlet-name>
+        <url-pattern>/addResinServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AddResinFilter</servlet-name>
+        <url-pattern>/addResinFilter</url-pattern>
+    </servlet-mapping>
+
+</web-app>
