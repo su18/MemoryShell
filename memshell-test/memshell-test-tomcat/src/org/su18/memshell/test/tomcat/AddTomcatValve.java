@@ -1,9 +1,7 @@
 package org.su18.memshell.test.tomcat;
 
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.Response;
+import org.apache.catalina.Valve;
 import org.apache.catalina.core.StandardContext;
-import org.apache.catalina.valves.ValveBase;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -12,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Field;
+
+import static org.su18.memshell.test.tomcat.DynamicUtils.VALVE_CLASS_STRING;
 
 /**
  * 访问这个 Servlet 将会动态添加自定义 Valve
@@ -46,7 +46,7 @@ public class AddTomcatValve extends HttpServlet {
 			}
 
 			// 添加自定义 Valve
-			o.addValve(new TestValve());
+			o.addValve((Valve) DynamicUtils.getClass(VALVE_CLASS_STRING).newInstance());
 
 			resp.getWriter().println("tomcat valve added");
 
@@ -55,17 +55,5 @@ public class AddTomcatValve extends HttpServlet {
 		}
 
 	}
-
-
-	public static class TestValve extends ValveBase {
-
-		@Override
-		public void invoke(Request request, Response response) throws IOException, ServletException {
-			response.getWriter().println("I come here first!");
-			// 不要忘了继续调用下一个 valve
-			this.getNext().invoke(request, response);
-		}
-	}
-
 
 }

