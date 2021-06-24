@@ -14,6 +14,7 @@
         <module>memshell-spring</module>
         <module>memshell-inject</module>
         <module>memshell-test</module>
+        <module>memshell-loader</module>
     </modules>
 
 

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Agent-Class: org.su18.memshell.loader.Agent
+Premain-Class: org.su18.memshell.loader.Agent
+Main-Class: org.su18.memshell.loader.Agent
+Can-Retransform-Classes: true
+Can-Redefine-Classes: true
