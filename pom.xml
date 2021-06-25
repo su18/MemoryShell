@@ -10,7 +10,6 @@
     <version>1.0.0</version>
     <modules>
         <module>memshell-scanner</module>
-        <module>memshell-killer</module>
         <module>memshell-spring</module>
         <module>memshell-inject</module>
         <module>memshell-test</module>

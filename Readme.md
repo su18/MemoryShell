@@ -42,8 +42,8 @@ suagent 项目，使用 JavaAgent 技术来检测和防御内存马。
 
 - build 项目后会在 suagent 文件夹生成 suagent-loader.jar 以及 suagent-scanner.jar 两个文件。
 - 使用 java -jar suagent-loader.jar 可列举出当前系统上的 JVM PID 列表。
-- 使用  java -jar suagent-loader.jar attach 100 对指定 PID 进行 attach 注入，suagent 会自动对系统内 servlet-api 类型的内存马进行扫描和字节注入，可以在控制台下看到日志输出。
-- 使用  java -jar suagent-loader.jar detach 100 移除 agent。
+- 使用 java -jar suagent-loader.jar attach 100 对指定 PID 进行 attach 注入，suagent 会自动对系统内 servlet-api 类型的内存马进行扫描和字节注入，可以在控制台下看到日志输出。
+- 使用 java -jar suagent-loader.jar detach 100 移除 agent。
 
 
 
