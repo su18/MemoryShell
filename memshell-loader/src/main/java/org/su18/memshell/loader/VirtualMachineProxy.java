@@ -28,7 +28,7 @@ public class VirtualMachineProxy {
 				URL[] urls = new URL[]{toolsJar.toURI().toURL()};
 				virtualMachineClass = new URLClassLoader(urls).loadClass(virtualMachineName);
 			} catch (Exception ex) {
-				System.out.println("Agent加载tools.jar异常: " + e);
+				System.out.println("Load tools.jar Exception: " + e);
 				ex.printStackTrace();
 			}
 		}
@@ -71,7 +71,7 @@ public class VirtualMachineProxy {
 			}
 		}
 
-		throw new RuntimeException("Agent不能够加载JVM tools.jar,请确认已配置好\"JAVA_HOME\"环境变量。");
+		throw new RuntimeException("Can Not Load JVM tools.jar,Please Confirm Your \"JAVA_HOME\" Config");
 	}
 
 	/**

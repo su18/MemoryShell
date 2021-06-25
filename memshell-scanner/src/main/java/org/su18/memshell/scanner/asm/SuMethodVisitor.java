@@ -58,8 +58,8 @@ public class SuMethodVisitor extends AdviceAdapter {
 
 	public void insertHook() {
 		String methodName = suMethodDesc.getMethodName();
-		String message = "正在向 shell class " + suMethodDesc.getSuClassDesc().getClassName() +
-				"的" + suMethodDesc.getMethodName() + "方法写入字节码";
+		String message = "Overwriting Byte Code To Class: [" + suMethodDesc.getSuClassDesc().getClassName() +
+				"] Method [" + suMethodDesc.getMethodName() + "]";
 
 		if (methodName.equals(SERVLET.getMethod()) || methodName.startsWith(LISTENER.getMethod()) ||
 				(methodName.startsWith("do") && !"doFilter".equals(methodName))) {

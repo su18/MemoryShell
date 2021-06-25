@@ -80,7 +80,7 @@ public class Agent {
 					ClassFileTransformer transformer = iterator.next();
 					instrumentation.removeTransformer(transformer);
 					iterator.remove();
-					StringUtils.println(AGENT_NAME + " 移除 transformer: " + transformer.getClass() + " 成功!");
+					StringUtils.println("Removing Transformer: " + transformer.getClass() + " Success");
 				}
 
 				// 恢复所有已经被 suagent reTransform、modified的类
@@ -93,7 +93,7 @@ public class Agent {
 								instrumentation.retransformClasses(clazz);
 								iterator.remove();
 
-								StringUtils.println(AGENT_NAME + " ReTransform " + clazz);
+								StringUtils.println("ReTransform " + clazz);
 							} catch (UnmodifiableClassException e) {
 								e.printStackTrace();
 							}
@@ -107,11 +107,11 @@ public class Agent {
 
 			// 关闭RASP 类加载器
 			if (suClassLoader != null && suClassLoader.closeClassLoader()) {
-				StringUtils.println(AGENT_NAME + "释放Agent类资源成功!");
+				StringUtils.println("Release SuAgent Resource Success");
 				suClassLoader = null;
 			}
 
-			StringUtils.println(AGENT_NAME + " 移除成功！");
+			StringUtils.println("Detach Success");
 		}
 	}
 
@@ -191,7 +191,7 @@ public class Agent {
 			loader.loadAgent(vm, new File(loaderFileUrl.toURI()).getAbsolutePath(), args);
 			loader.detach(vm);
 		} catch (Exception e) {
-			StringUtils.println(AGENT_NAME + " 附加到JVM异常: " + e);
+			StringUtils.println("Attach To JVM Exception: " + e);
 			e.printStackTrace();
 		}
 	}
@@ -203,16 +203,15 @@ public class Agent {
 	 */
 	private static void printUsage(VirtualMachineProxy loader) {
 		StringUtils.println(AGENT_NAME + " (Java Agent)");
-		StringUtils.println("示例(Usage): java -jar " + AGENT_LOADER_FILE_NAME + " [Options]");
-		StringUtils.println("  2) detach [Java PID]");
-		StringUtils.println("  3) attach [Java PID]");
+		StringUtils.println("Usage: java -jar " + AGENT_LOADER_FILE_NAME + " [Options]");
+		StringUtils.println("  1) detach [Java PID]");
+		StringUtils.println("  2) attach [Java PID]");
 		StringUtils.println("\r\n");
-		StringUtils.println("例如(EXAMPLES) :");
-		StringUtils.println("  java -jar " + AGENT_LOADER_FILE_NAME + " install /data/apache-tomcat-7.0.75/");
+		StringUtils.println("EXAMPLES :");
 		StringUtils.println("  java -jar " + AGENT_LOADER_FILE_NAME + " attach 10001");
 		StringUtils.println("  java -jar " + AGENT_LOADER_FILE_NAME + " detach 10001");
 		StringUtils.println("\r\n");
-		StringUtils.println("当前运行的JVM进程列表:");
+		StringUtils.println("JVM PID List:");
 
 		try {
 			Map<String, String> processMap = loader.listJvmPid();
@@ -222,7 +221,7 @@ public class Agent {
 				StringUtils.println("PID:" + processId + "\tProcessName:" + ("".equals(name) ? "NONE" : name));
 			}
 		} catch (Exception e) {
-			StringUtils.println(AGENT_NAME + "获取JVM进程异常:" + e);
+			StringUtils.println("Load JVM PID Exception:" + e);
 			e.printStackTrace();
 		}
 	}
@@ -251,7 +250,7 @@ public class Agent {
 		// 判断当前 JDK 版本
 		String javaVersion = System.getProperty("java.version");
 		if (JAVA_VERSION_PATTERN.matcher(javaVersion).find()) {
-			System.err.println("当前JDK版本: " + javaVersion + ". JDK版本不能低于JDK1.6!");
+			System.err.println("JDK Version: " + javaVersion + ". JDK Version Can Not Less Than 1.6!");
 		}
 
 		if ("attach".equalsIgnoreCase(args[0]) || "detach".equalsIgnoreCase(args[0])) {

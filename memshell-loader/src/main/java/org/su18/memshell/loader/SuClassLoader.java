@@ -199,7 +199,7 @@ public class SuClassLoader extends URLClassLoader {
 				JarFile jarFile = (JarFile) method.invoke(loader);
 				jarFile.close();
 
-				StringUtils.println("Agent closed jar: [" + jarFile.getName() + "]");
+				StringUtils.println("Closed Jar: [" + jarFile.getName() + "]");
 			}
 
 			return true;

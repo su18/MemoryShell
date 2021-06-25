@@ -76,7 +76,7 @@ public class BootStrap {
 		// 获取所有已加载的类
 		Class<?>[] allLoadedClasses = inst.getAllLoadedClasses();
 
-		StringUtils.println("正在审查目标环境中的类，以及创建Hook，共计 " + allLoadedClasses.length + " 个");
+		StringUtils.println("Investigating All Loaded Classed,total amount: " + allLoadedClasses.length);
 
 		for (Class<?> clazz : allLoadedClasses) {
 
@@ -85,7 +85,7 @@ public class BootStrap {
 
 				// 获取包名是黑名单的类（并不是一个体面的方式，但是挺暴力的）
 				if (clazz.getName().startsWith("net.rebeyond.") && clazz.getName().startsWith("com.metasploit.")) {
-					StringUtils.println("系统内存在高危类：" + clazz.getName());
+					StringUtils.println("High-Risk Package Name In System:" + clazz.getName());
 					StringUtils.print(ClassUtils.getClassInfo(clazz));
 					continue;
 				}
@@ -95,27 +95,26 @@ public class BootStrap {
 			}
 		}
 
-		StringUtils.println("获取全部类完毕，正在检查内存马");
+		StringUtils.println("Extract Key Class Finished,Checking Memory Shell...");
 
 		for (Map.Entry<Class<?>, String> entry : keyClassMap.entrySet()) {
 
 			// 根据该 class 在其 ClassLoader 中是否存有 Resource 判断是否在磁盘上存在其文件
 			// 若没有，则可能为内存马
 			if (ClassUtils.checkClassIsNotExists(entry.getKey())) {
-				StringUtils.println("检测到 " + entry.getValue() + " 类型内存马 [ Resource 缺失 ]");
+				StringUtils.println("Find " + entry.getValue() + "-TYPED Memory Shell [ Resource Missing ]");
 				StringUtils.print(ClassUtils.getClassInfo(entry.getKey()));
 				shellClassMap.put(entry.getKey(), entry.getValue());
 			}
 		}
 
 
-		StringUtils.println("内存马检查完毕，正在给内存马加入 hook 逻辑");
+		StringUtils.println("Checking Memory Shell Finished,Trying To Hook Shell Class..");
 
 		// 将 shell class 加入 HOOK 进行处理
 		for (Map.Entry<Class<?>, String> shellEntry : shellClassMap.entrySet()) {
 			try {
 				if (inst.isModifiableClass(shellEntry.getKey())) {
-					StringUtils.println(AGENT_NAME + " transform shell class " + shellEntry.getKey().getName());
 					inst.retransformClasses(shellEntry.getKey());
 					cache.getReTransformClass().add(shellEntry.getKey().getName());
 				}
@@ -132,6 +131,11 @@ public class BootStrap {
 	 * @param clazz Class
 	 */
 	private static void extractKeyClass(Class<?> clazz) {
+
+		// 忽略动态代理类
+		if (clazz.getName().startsWith("com.sun.proxy")) {
+			return;
+		}
 
 		// 获取 clazz 的全部父类和接口
 		Set<String> set = ClassUtils.getSuperClassListByAsm(clazz, clazz.getClassLoader());
