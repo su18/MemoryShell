@@ -159,7 +159,7 @@ public class BootStrap {
 	 */
 	private static void printLogo() {
 		String banner = getBanner();
-		StringUtils.print("\n" + banner + "\t[ " + AGENT_NAME + "v1.0.0 ] by su18 \n");
+		StringUtils.print("\n" + banner + "[ " + AGENT_NAME + " v1.0.0 ] by su18\n");
 	}
 
 	/**
